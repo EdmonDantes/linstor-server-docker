@@ -79,6 +79,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          file: "{{ matrix.file }}"
+          file: "${{ matrix.file }}"
           platforms: linux/amd64,linux/arm64/v8,linux/riscv64
-          tags: "{{ env.PRODUCED_TAGS }}"
+          tags: "${{ env.PRODUCED_TAGS }}"
