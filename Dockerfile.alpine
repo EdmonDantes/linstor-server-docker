@@ -1,0 +1,24 @@
+FROM alpine:latest
+
+LABEL stage=app
+LABEL app=linstor-server-docker
+
+ARG LINSTOR_SERVER_GIT_URL=https://github.com/LINBIT/linstor-server.git
+ARG LINSTOR_SERVER_GIT_TAG
+
+RUN set -e; \
+    apk add --no-cache git make python3 openjdk21-jdk; \
+    mkdir -p /src; \
+    mkdir -p /app; \
+    git clone --recursive "$LINSTOR_SERVER_GIT_URL" /src/linstor-server; \
+    cd /src/linstor-server; \
+    if [ -z "$LINSTOR_SERVER_GIT_TAG" ]; then \
+      export LINSTOR_SERVER_GIT_TAG="$(git describe --tags --abbrev=0)"; \
+    fi; \
+    git checkout "$LINSTOR_SERVER_GIT_TAG"; \
+    git submodule update; \
+    /src/linstor-server/gradlew --no-daemon getProtoc assemble; \
+    tar x -f /src/linstor-server/build/distributions/linstor-server*.tar -C /app;  \
+    apk del --no-cache git make python3 openjdk21-jdk; \
+    apk add --no-cache openjdk21-jre; \
+    rm -rf /src

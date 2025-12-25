@@ -1,0 +1,30 @@
+FROM debian:latest
+
+LABEL stage=app
+LABEL app=linstor-server-docker
+
+ARG LINSTOR_SERVER_GIT_URL=https://github.com/LINBIT/linstor-server.git
+ARG LINSTOR_SERVER_GIT_TAG
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN set -e; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends git make default-jdk python3; \
+    rm -rf /var/lib/apt/lists/*; \
+    mkdir -p /src; \
+    mkdir -p /app; \
+    git clone --recursive "$LINSTOR_SERVER_GIT_URL" /src/linstor-server; \
+    cd /src/linstor-server; \
+    if [ -z "$LINSTOR_SERVER_GIT_TAG" ]; then \
+      export LINSTOR_SERVER_GIT_TAG="$(git describe --tags --abbrev=0)"; \
+    fi; \
+    git checkout "$LINSTOR_SERVER_GIT_TAG"; \
+    git submodule update; \
+    /src/linstor-server/gradlew --no-daemon getProtoc assemble; \
+    tar xf /src/linstor-server/build/distributions/linstor-server*.tar --one-top-level -C /app;  \
+    apt-get purge -y git make python3 default-jdk; \
+    apt-get install -y --no-install-recommends default-jre; \
+    apt-get autoremove -y; \
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /src
