@@ -73,7 +73,7 @@ jobs:
 
       - name: Set correct tags
         run: |
-          echo "PRODUCED_TAGS=$(echo '{{ matrix.tags }}' | awk -F ',' -v OFS=',' -vdocker='dantes2104/linstor-server-docker' -vgithub='ghcr.io/edmondantes/linstor-server-docker' '{ for (i=1;i<=NF;++i) $i=docker $i"," github $i; print }')" >> $GITHUB_ENV
+          echo "PRODUCED_TAGS=$(echo '${{ matrix.tags }}' | awk -F ',' -v OFS=',' -vdocker='dantes2104/linstor-server-docker:' -vgithub='ghcr.io/edmondantes/linstor-server-docker:' '{ for (i=1;i<=NF;++i) $i=docker $i"," github $i; print }')" >> $GITHUB_ENV
 
       - name: Build and push
         uses: docker/build-push-action@v6
