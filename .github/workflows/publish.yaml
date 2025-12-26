@@ -80,5 +80,6 @@ jobs:
         with:
           push: true
           file: "${{ matrix.file }}"
+          context: .
           platforms: linux/amd64,linux/arm64/v8,linux/riscv64
           tags: "${{ env.PRODUCED_TAGS }}"
