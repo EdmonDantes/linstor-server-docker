@@ -20,27 +20,35 @@ jobs:
           - file: Dockerfile.alpine
             base: alpine:3.23
             tags: "alpine-3.23"
+            arch: linux/amd64,linux/arm64/v8
           - file: Dockerfile.alpine
             base: alpine:3.22
             tags: "alpine-3.22"
+            arch: linux/amd64,linux/arm64/v8
           - file: Dockerfile.debian-based
             base: debian:bookworm
             tags: "debian-bookworm,debian-12"
+            arch: linux/amd64,linux/arm64/v8
           - file: Dockerfile.debian-based
             base: debian:bookworm-slim
             tags: "debian-bookworm-slim,debian-12-slim"
+            arch: linux/amd64,linux/arm64/v8
           - file: Dockerfile.debian-based
             base: debian:trixie
             tags: "debian,debian-trixie,debian-latest,debian-13"
+            arch: linux/amd64,linux/arm64/v8,linux/riscv64
           - file: Dockerfile.debian-based
             base: debian:trixie-slim
             tags: "debian-slim,debian-trixie-slim,debian-latest-slim,debian-13-slim"
+            arch: linux/amd64,linux/arm64/v8,linux/riscv64
           - file: Dockerfile.debian-based
             base: ubuntu:jammy
             tags: "ubuntu-jammy,ubuntu-22"
+            arch: linux/amd64,linux/arm64/v8
           - file: Dockerfile.debian-based
             base: ubuntu:noble
             tags: "ubuntu-noble,ubuntu-24"
+            arch: linux/amd64,linux/arm64/v8
     steps:
       - name: Check out the repo
         uses: actions/checkout@v5
@@ -81,5 +89,5 @@ jobs:
           push: true
           file: "${{ matrix.file }}"
           context: .
-          platforms: linux/amd64,linux/arm64/v8,linux/riscv64
+          platforms: "${{ matrix.arch }}"
           tags: "${{ env.PRODUCED_TAGS }}"
